@@ -17,7 +17,7 @@ const router = createRouter({
     {
       path: '/:symbol',
       name: 'stockDetails',
-      component: () => import('../views/StockDetails.vue')
+      component: () => import('../views/StockDetailsView.vue')
     },
     {
       path: '/login',
