@@ -30,7 +30,7 @@
 <script setup>
     import { onMounted, ref } from 'vue';
     import { useRoute } from 'vue-router';
-    import StockChartComponent from '../components/stockchartComponent.vue';
+    import StockChartComponent from '../components/StockChartComponent.vue';
     
     const route = useRoute();
     const symbol = route.params.symbol;
