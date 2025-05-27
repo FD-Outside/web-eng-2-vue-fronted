@@ -12,8 +12,7 @@
   
         <section class="stock-chart">
             <h3>Kursverlauf</h3>
-            <!-- Platzhalter für z. B. Chart.js oder ApexCharts -->
-            <div class="chart-placeholder">📈 Hier kommt der Graph hin</div>
+            <StockChartComponent></StockChartComponent>
         </section>
   
         <section class="stock-details">
@@ -31,6 +30,7 @@
 <script setup>
     import { onMounted, ref } from 'vue';
     import { useRoute } from 'vue-router';
+    import StockChartComponent from '../components/stockchartComponent.vue';
     
     const route = useRoute();
     const symbol = route.params.symbol;
