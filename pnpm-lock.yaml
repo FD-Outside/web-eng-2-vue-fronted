@@ -8,6 +8,12 @@ importers:
 
   .:
     dependencies:
+      chart.js:
+        specifier: ^4.4.9
+        version: 4.4.9
+      chartjs-chart-financial:
+        specifier: ^0.2.1
+        version: 0.2.1(chart.js@4.4.9)
       pinia:
         specifier: ^3.0.1
         version: 3.0.2(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
@@ -362,6 +368,9 @@ packages:
   '@jridgewell/trace-mapping@0.3.25':
     resolution: {integrity: sha512-vNk6aEwybGtawWmy/PzwnGDOjCkLWSD2wqvjGGAgOAwCGWySYXfYoxt00IJkTF+8Lb57DwOb3Aa0o9CApepiYQ==}
 
+  '@kurkle/color@0.3.4':
+    resolution: {integrity: sha512-M5UknZPHRu3DEDWoipU6sE8PdkZ6Z/S+v4dD+Ke8IaNlpdSQah50lz1KtcFBa2vsdOnwbbnxJwVM4wty6udA5w==}
+
   '@polka/url@1.0.0-next.29':
     resolution: {integrity: sha512-wwQAWhWSuHaag8c4q/KN/vCoeOJYshAIvMQwD4GpSb3OiZklFfvAgmj0VCBBImRpuF/aFgIRzllXlVX93Jevww==}
 
@@ -617,6 +626,15 @@ packages:
 
   caniuse-lite@1.0.30001716:
     resolution: {integrity: sha512-49/c1+x3Kwz7ZIWt+4DvK3aMJy9oYXXG6/97JKsnjdCk/6n9vVyWL8NAwVt95Lwt9eigI10Hl782kDfZUUlRXw==}
+
+  chart.js@4.4.9:
+    resolution: {integrity: sha512-EyZ9wWKgpAU0fLJ43YAEIF8sr5F2W3LqbS40ZJyHIner2lY14ufqv2VMp69MAiZ2rpwxEUxEhIH/0U3xyRynxg==}
+    engines: {pnpm: '>=8'}
+
+  chartjs-chart-financial@0.2.1:
+    resolution: {integrity: sha512-RI3zrszyf2YdW7ME8I5XDsicy6YaU+uA1XZmGddR3rdcQlGf4pSgGFK8O0PWPO5Szdc8wZ8qpns++yib6pWBaw==}
+    peerDependencies:
+      chart.js: ^4.0.0
 
   convert-source-map@2.0.0:
     resolution: {integrity: sha512-Kvp459HrV2FEJ1CAsi1Ku+MY3kasH19TFykTz2xWmMeq6bk2NU3XXvfJ+Q61m0xktWwt+1HSYf3JZsTms3aRJg==}
@@ -1381,6 +1399,8 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.0
 
+  '@kurkle/color@0.3.4': {}
+
   '@polka/url@1.0.0-next.29': {}
 
   '@rollup/pluginutils@5.1.4(rollup@4.40.1)':
@@ -1642,6 +1662,14 @@ snapshots:
       run-applescript: 7.0.0
 
   caniuse-lite@1.0.30001716: {}
+
+  chart.js@4.4.9:
+    dependencies:
+      '@kurkle/color': 0.3.4
+
+  chartjs-chart-financial@0.2.1(chart.js@4.4.9):
+    dependencies:
+      chart.js: 4.4.9
 
   convert-source-map@2.0.0: {}
 
