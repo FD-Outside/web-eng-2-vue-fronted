@@ -8,7 +8,7 @@
           <i class="fa-solid fa-times"></i>
         </button>
         <router-link to="/" @click="closeMenu">Start</router-link>
-        <router-link to="#" @click="closeMenu">Favoriten</router-link>
+        <router-link to="/favorites" @click="closeMenu">Favoriten</router-link>
         <router-link to="/contact" @click="closeMenu">Kontakt</router-link>
         <router-link to="/login" @click="closeMenu">Login</router-link>
       </nav>
