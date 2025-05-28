@@ -46,7 +46,7 @@
 
   const filteredFavorites = computed(() => {
     const query = searchQuery.value.trim().toLowerCase();
-    if (query === '') return store.favorites; // Zeige alle Favoriten, wenn keine Suchanfrage vorhanden ist
+    if (query === '') return store.favorites;
       return store.favorites.filter(stock =>
         stock.name.toLowerCase().includes(query) ||
         stock.symbol.toLowerCase().includes(query)
