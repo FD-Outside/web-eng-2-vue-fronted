@@ -1,8 +1,12 @@
 <template>
     <main class="details-container">
-        <h2 class="stock-title">{{ symbol }} – {{ stockName }}</h2>
-  
-        <section class="stock-overview">
+        <div class="title-container">
+            <h2 class="stock-title">{{ symbol }} – {{ stockName }}</h2>
+            <div class="favorite-button" @click="toggleFavorite">
+                <i :class="isFav ? 'fa-solid fa-star' : 'fa-regular fa-star'"></i>
+            </div>
+        </div>
+            <section class="stock-overview">
             <div class="stock-info">
                 <p><strong>Aktueller Kurs:</strong> {{ currentPrice }} $</p>
                 <p><strong>Veränderung:</strong> {{ priceChange }}%</p>
@@ -28,9 +32,10 @@
 </template>
   
 <script setup>
-    import { onMounted, ref } from 'vue';
+    import { onMounted, ref, computed } from 'vue';
     import { useRoute } from 'vue-router';
     import StockChartComponent from '../components/StockChartComponent.vue';
+    import { useFavoritesStore } from '@/stores/useFavoritesStore';
     
     const route = useRoute();
     const symbol = route.params.symbol;
@@ -50,9 +55,28 @@
     onMounted(() => {
         console.log('Lade Daten für', symbol);
     });
+
+
+    const store = useFavoritesStore();
+
+    const isFav = computed(() => store.isFavorite(symbol));
+    const toggleFavorite = () => {
+        store.toggleFavorite({
+            symbol,
+            name: stockName.value,
+            price: currentPrice.value,
+        });
+        isFav.value = !isFav.value;
+    };
 </script>
   
 <style scoped>
+    .title-container {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+    }
+
     .details-container {
         max-width: 900px;
         margin: 2rem auto;
@@ -94,6 +118,21 @@
     
     .stock-details li {
         margin-bottom: 0.5rem;
+    }
+
+    .favorite-button {
+        font-size: 1.5rem;
+        cursor: pointer;
+        text-align: right;
+        margin-bottom: 1rem;
+    }
+
+    .favorite-button .fa-solid {
+        color: #fbbf24;
+    }
+
+    .favorite-button .fa-regular {
+        color: #ccc;
     }
 </style>
   
