@@ -1,9 +1,5 @@
 <template>
     <main class="content">
-        <link
-			rel="stylesheet"
-			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-        </link>
         <h2 class="section-title">Live Aktienkurse</h2>
         <p class="section-description">Wählen Sie eine Aktie aus, um den aktuellen Kurs zu sehen:</p>
         <input v-model="searchQuery" type="text" placeholder="🔍   Suchen Sie nach bestimmten Aktien"
@@ -16,14 +12,10 @@
                 <div class="price-container">
                     <p>Kurs: {{ stock.price }} $</p>
                     <p class="daily-change">
-                        <i :class="[
-                                'fa-solid',
-                                stock.dailyChange > 0 ? 'fa-arrow-up' : stock.dailyChange < 0 ? 'fa-arrow-down' : ''
-                            ]" 
-                            :style="{
-                                color: stock.dailyChange > 0 ? 'green' : stock.dailyChange < 0 ? 'red' : '#666'
-                            }"
-                        ></i>
+                        <font-awesome-icon
+                            :icon="['fas', stock.dailyChange > 0 ? 'arrow-up' : stock.dailyChange < 0 ? 'arrow-down' : '']"
+                            :style="{ color: stock.dailyChange > 0 ? 'green' : stock.dailyChange < 0 ? 'red' : '#666' }"
+                        />
                         {{ stock.dailyChange }}%
                     </p>
                 </div>
