@@ -5,7 +5,7 @@
       <h1 class="logo">AktienRadar</h1>
       <nav class="nav-links">
         <button id="menu-close-button" class="logo-button">
-          <i class="fa-solid fa-times"></i>
+          <font-awesome-icon icon="fa-solid fa-times" />
         </button>
         <router-link to="/" @click="closeMenu">Start</router-link>
         <router-link to="/favorites" @click="closeMenu">Favoriten</router-link>
@@ -13,7 +13,7 @@
         <router-link to="/login" @click="closeMenu">Login</router-link>
       </nav>
       <button id="menu-open-button" class="logo-button">
-        ☰✖
+        <font-awesome-icon icon="fa-solid fa-bars" />
       </button>
     </div>
   </header>
@@ -129,6 +129,7 @@ export default {
     display: block;
     background: transparent;
     border: none;
+    cursor: pointer;
   }
 
   .header-container #menu-close-button {
