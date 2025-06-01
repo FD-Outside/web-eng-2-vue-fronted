@@ -1,6 +1,6 @@
 import wretch from "wretch";
 
-const baseUrl = "https://localhost:8081/api/v1/"
+const baseUrl = "http://localhost:8081/api/v1"
 
 const apiInstance = wretch(baseUrl, {
     mode: "cors"
