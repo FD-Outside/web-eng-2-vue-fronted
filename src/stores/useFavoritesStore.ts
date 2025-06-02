@@ -26,7 +26,7 @@ interface State {
 
 async function fetchDeleteFavorite(id: number): Promise<boolean> {
   try {
-    const res = apiInstance.url(`/user/me/favorites/${id}`).delete()
+    const res = apiInstance.url(`/users/me/favorites/${id}`).delete()
     const succesful = await res.json<boolean>()
     return succesful
   } catch (error) {
@@ -37,7 +37,7 @@ async function fetchDeleteFavorite(id: number): Promise<boolean> {
 
 async function createNewFavorite(name: string, symbol: string): Promise<BackendFavorite | null> {
   try {
-    const res = apiInstance.url(`/user/me/favorites`).post({
+    const res = apiInstance.url(`/users/me/favorites`).post({
       name,
       symbol
     })
