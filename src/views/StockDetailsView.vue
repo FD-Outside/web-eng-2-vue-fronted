@@ -1,7 +1,7 @@
 <template>
     <main class="details-container">
         <div class="title-container">
-            <h2 class="stock-title">{{ symbol }} – {{ stockName }}</h2>
+            <h2 class="stock-title">{{ symbol }} - {{ name }}</h2>
             <div class="favorite-button" @click="toggleFavorite">
                 <i :class="isFav ? 'fa-solid fa-star' : 'fa-regular fa-star'"></i>
             </div>
@@ -16,57 +16,59 @@
 
         <section class="stock-chart">
             <h3>Kursverlauf</h3>
-            <StockChartComponent></StockChartComponent>
-        </section>
-
-        <section class="stock-details">
-            <h3>Weitere Informationen</h3>
-            <ul>
-                <li><strong>Marktkapitalisierung:</strong> {{ marketCap }}</li>
-                <li><strong>Volumen:</strong> {{ volume }}</li>
-                <li><strong>52-Wochen-Hoch:</strong> {{ high52w }}</li>
-                <li><strong>52-Wochen-Tief:</strong> {{ low52w }}</li>
-            </ul>
+            <StockChartComponent :bars="chartBars"></StockChartComponent>
         </section>
     </main>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { onMounted, ref, computed } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute, useRouter, type LocationQueryValue } from 'vue-router';
 import StockChartComponent from '../components/StockChartComponent.vue';
 import { useFavoritesStore } from '@/stores/useFavoritesStore';
 import { useUserStore } from '@/stores/useUserStore';
+import { apiInstance } from '@/utils/wretch';
+import type { Bar, StockResponse } from '@/types/apiResponses';
 
 const route = useRoute();
-const symbol = route.params.symbol;
+const symbol = route.params.symbol instanceof Array ? route.params.symbol[0] : route.params.symbol
+
+const name = (route.query.name instanceof Array?  route.query.name[0] : route.query.name) ?? "Name not given"
 
 const router = useRouter()
 
 const userStore = useUserStore()
 
-// Platzhalterwerte – später per API füllen
-const stockName = ref('Firmenname');
 const currentPrice = ref(0);
 const priceChange = ref(0);
 const lastUpdated = ref('–');
 
-const marketCap = ref('–');
-const volume = ref('–');
-const high52w = ref('–');
-const low52w = ref('–');
+const chartBars = ref<Bar[]>([])
 
-// Optional: Daten hier per API laden
-onMounted(() => {
-    console.log('Lade Daten für', symbol);
-});
+async function fetchDailyBars(symbol: string) {
+    try {
+        const res = apiInstance.url(`/stock/daily?symbol=${symbol}`).get()
+        const data = await res.json<StockResponse>();
+        if(data.bars.length < 1) return
+        console.log(data)
+        const latestBar = data.bars[data.bars.length - 1]
+        const oldBar = data.bars[0]
+        currentPrice.value = latestBar.c
+        priceChange.value = Number((((latestBar.c - oldBar.c) / oldBar.c) * 100).toPrecision(4))
+        lastUpdated.value = latestBar.t //can be updated to actual formatted time
+        chartBars.value = data.bars
+    } catch (error) {
+        console.log(error)
+    }
+}
 
+fetchDailyBars(symbol)
 
 const store = useFavoritesStore();
 
 const isFav = computed(() => store.isFavorite(symbol));
 const toggleFavorite = async () => {
-    //TODO: Check for logged in user when User Store is implemented
+
     if(!userStore.token) {
         alert("Logge dich ein um Favoriten zu speichern")
         router.push("/login")
@@ -75,11 +77,11 @@ const toggleFavorite = async () => {
 
     const success = await store.toggleFavorite({
         symbol,
-        name: stockName.value,
+        name: name,
         price: currentPrice.value,
+        dailyChange: priceChange.value
     });
     if (!success) return
-    isFav.value = !isFav.value;
 };
 </script>
 

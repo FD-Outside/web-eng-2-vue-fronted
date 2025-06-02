@@ -6,7 +6,7 @@
             class="search-bar" />
 
         <div class="stock-grid">
-            <router-link v-for="stock in filteredStocks" :key="stock.symbol" :to="'/' + stock.symbol"
+            <router-link v-for="stock in filteredStocks" :key="stock.symbol" :to="'/' + stock.symbol + '?name=' + stock.name"
                 class="stock-card">
                 <h3>{{ stock.symbol }} – {{ stock.name }}</h3>
                 <div class="price-container">
