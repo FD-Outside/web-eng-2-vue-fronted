@@ -4,6 +4,13 @@ interface BasicStock {
     symbol: string
 }
 
+interface Stock {
+  symbol: string
+  name: string
+  price: number
+  dailyChange: number
+}
+
 interface SymbolResponse {
     assets: BasicStock[]
 }
@@ -27,6 +34,7 @@ interface StockResponse {
 export type 
 {
     BasicStock,
+    Stock,
     SymbolResponse,
     Bar,
     StockResponse

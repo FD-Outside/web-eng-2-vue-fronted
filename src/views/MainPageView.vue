@@ -30,7 +30,7 @@
 </template>
 
 <script setup lang="ts">
-import type { BasicStock, StockResponse, SymbolResponse } from '@/types/apiResponses';
+import type { BasicStock, Stock, StockResponse, SymbolResponse } from '@/types/apiResponses';
 import { apiInstance, fetchDailyPriceAndChange } from '@/utils/wretch';
 
 import { ref, computed, watch } from 'vue';
@@ -40,14 +40,27 @@ const searchQuery = ref('');
 const searching = ref(false);
 
 // Sample stock data
-const stocks = ref([
-    { symbol: 'AAPL', name: 'Apple Inc.', price: 178.20, dailyChange: 1.45 },
-    { symbol: 'MSFT', name: 'Microsoft Corp.', price: 312.55, dailyChange: -2.8 },
-    { symbol: 'GOOGL', name: 'Alphabet Inc.', price: 125.90, dailyChange: 0 },
-    { symbol: 'AMZN', name: 'Amazon.com Inc.', price: 132.45, dailyChange: -1.45 },
-    { symbol: 'TSLA', name: 'Tesla Inc.', price: 187.75, dailyChange: 3.52 },
-    { symbol: 'NVDA', name: 'NVIDIA Corp.', price: 408.15, dailyChange: 1.9 }
-]);
+const stocks = ref<Stock[]>([]);
+
+const defaultStocks = [
+    { symbol: 'AAPL', name: 'Apple Inc.'},
+    { symbol: 'MSFT', name: 'Microsoft Corp.'},
+    { symbol: 'GOOGL', name: 'Alphabet Inc.'},
+    { symbol: 'AMZN', name: 'Amazon.com Inc.'},
+    { symbol: 'TSLA', name: 'Tesla Inc.'},
+    { symbol: 'NVDA', name: 'NVIDIA Corp.'}
+]
+
+loadDefaultStock()
+
+async function loadDefaultStock() {
+    if(stocks.value.length > 0) return
+    for (const stock of defaultStocks) {
+        const details = await fetchDailyPriceAndChange(stock.symbol)
+        if (!details) continue
+        stocks.value.push({ ... stock, ...details})
+    }
+}
 
 const searchResult = ref<BasicStock[]>([])
 

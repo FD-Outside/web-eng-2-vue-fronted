@@ -1,14 +1,8 @@
+import type { Stock } from '@/types/apiResponses';
 import { apiInstance } from '@/utils/wretch';
 import { faL } from '@fortawesome/free-solid-svg-icons';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
-
-export interface Stock {
-  symbol: string
-  name: string
-  price: number
-  dailyChange: number
-}
 
 interface Favorite extends Stock {
   id: number

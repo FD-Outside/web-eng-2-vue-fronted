@@ -23,7 +23,7 @@ async function fetchDailyPriceAndChange(symbol: string): Promise<{ price: number
         if (data.bars.length < 1) return null
         const latestBar = data.bars[data.bars.length - 1]
         const oldBar = data.bars[0]
-        const dailyChange = ((latestBar.c - oldBar.c) / oldBar.c) * 100
+        const dailyChange = Number((((latestBar.c - oldBar.c) / oldBar.c) * 100).toPrecision(4))
         const price = latestBar.c
         return {price, dailyChange}
     } catch (error) {
