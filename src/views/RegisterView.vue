@@ -24,6 +24,9 @@
 <script setup>
 import { ref } from 'vue';
 import { apiInstance, setToken } from '../utils/wretch'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const email = ref('');
 const password = ref('');
@@ -39,18 +42,22 @@ async function handleRegister() {
     error.value = '';
     console.log('Registrierung:', email.value, password.value);
     try {
-        const repsonse = await apiInstance.url("/auth/signup").post({
+        const response = await apiInstance.url("/auth/signup").post({
             "username": email.value,
             "password": password.value
         }).json()
+
+        localStorage.setItem('token', response.token);
+        localStorage.setItem("userEmail", email.value);
+        setToken(response.token)
+
+        router.push('/');
+
+        console.log(response)
     } catch (e) {
         error.value = e.message
         return
     }
-    setToken(repsonse.token)
-
-    //localStorage.setItem("username", repsonse.user.username)
-    console.log(repsonse)
 }
 </script>
 
