@@ -22,14 +22,38 @@
 
 <script setup>
 import { ref } from 'vue';
+import { apiInstance, setToken } from '../utils/wretch'
+import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/useUserStore';
+
+const router = useRouter();
+const userStore = useUserStore();
 
 const email = ref('');
 const password = ref('');
+const error = ref('');
 
-function handleLogin() {
-    // Hier könnte später eine Authentifizierung eingebaut werden
-    console.log('Login mit:', email.value, password.value);
-    alert('Login-Versuch gestartet!');
+async function handleLogin() {
+    error.value = '';
+    console.log('Login:', email.value, password.value);
+
+    try {
+        const response = await apiInstance.url("/auth/login").post({
+            "username": email.value,
+            "password": password.value
+        }).json();
+
+        setToken(response.token);
+
+        userStore.updateUserData(response.token, email.value);
+
+        router.push('/');
+
+        console.log('Login erfolgreich:', response.token);
+    } catch (e) {
+        error.value = 'Login fehlgeschlagen. Überprüfe deine Eingaben.';
+        console.error('Fehler beim Login:', e);
+    }
 }
 </script>
 
