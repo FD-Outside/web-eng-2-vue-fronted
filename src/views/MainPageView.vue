@@ -49,6 +49,22 @@ const stocks = ref([
     { symbol: 'NVDA', name: 'NVIDIA Corp.', price: 408.15, dailyChange: 1.9 }
 ]);
 
+async function fetchDailyPriceAndChange(symbol: string): Promise<{ price: number; dailyChange: number } | null> {
+    try {
+        const res = apiInstance.url(`/stock/daily?symbol=${symbol}`).get()
+        console.log(res)
+        const data: StockResponse = await res.json()
+        if (data.bars.length < 1) return null
+        const latestBar = data.bars[data.bars.length - 1]
+        const oldBar = data.bars[0]
+        const dailyChange = ((latestBar.c - oldBar.c) / oldBar.c) * 100
+        const price = latestBar.c
+        return {price, dailyChange}
+    } catch (error) {
+        return null;
+    }
+}
+
 const searchResult = ref<BasicStock[]>([])
 
 async function fetchSearchData(newQuery: string) {
@@ -60,17 +76,9 @@ async function fetchSearchData(newQuery: string) {
         console.log("Data Recieved", data)
         for (const stock of data.assets) {
             searchResult.value.push(stock)
-            const res = apiInstance.url(`/stock/daily?symbol=${stock.symbol}`).get()
-            console.log(res)
-            const data: StockResponse = await res.json()
-            if (data.bars.length < 1) continue
-            const latestBar = data.bars[data.bars.length - 1]
-            const oldBar = data.bars[0]
-            console.log(latestBar.t, latestBar.c)
-            console.log(oldBar.t, oldBar.c)
-            const dailyChange = ((latestBar.c - oldBar.c) / oldBar.c) * 100
-            const price = latestBar.c
-            stocks.value.push({ ...stock, dailyChange: Number(dailyChange.toPrecision(5)), price: price })
+            const details = await fetchDailyPriceAndChange(stock.symbol)
+            if (!details) continue
+            stocks.value.push({ ...stock, ...details })
         }
     } catch (error) {
         console.log(error)
