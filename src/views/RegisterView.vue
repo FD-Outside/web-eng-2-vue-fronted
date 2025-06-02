@@ -55,7 +55,7 @@ async function handleRegister() {
 
         console.log(response)
     } catch (e) {
-        error.value = e.message
+        error.value = "Diese E-Mail existiert bereits"
         return
     }
 }
