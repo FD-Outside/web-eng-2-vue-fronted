@@ -10,7 +10,7 @@
                 class="stock-card">
                 <h3>{{ stock.symbol }} – {{ stock.name }}</h3>
                 <div class="price-container">
-                    <p>Kurs: {{ stock.price }} $</p>
+                    <p>Kurs: {{ stock.price }} €</p>
                     <p class="daily-change">
                         <font-awesome-icon
                             :icon="['fas', stock.dailyChange > 0 ? 'arrow-up' : stock.dailyChange < 0 ? 'arrow-down' : '']"
