@@ -13,14 +13,14 @@
           <router-link to="/contact" @click="closeMenu">Kontakt</router-link>
           <div class="user-button-container">
             <button class="user-button" @click="toggleDropdown">
-              <template v-if="token && userInitials">
-                <div class="user-initials">{{ userInitials }}</div>
-              </template>
-              <template v-else>
+              <div v-if="userStore.token && userStore.userInitials">
+                <div class="user-initials">{{ userStore.userInitials }}</div>
+              </div>
+              <div v-else>
                 <i class="fa-solid fa-user"></i>
-              </template>
+              </div>
             </button>
-            <div v-if="dropdownVisible" class="dropdown">
+            <div v-if="userStore.token && dropdownVisible" class="dropdown">
               <button class="dropdown-item" @click.stop="logout">
                 <font-awesome-icon icon="fa-solid fa-right-from-bracket" /> Abmelden
               </button>
@@ -35,67 +35,47 @@
   </header>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/useUserStore';
 
+const router = useRouter()
+const userStore = useUserStore();
+const dropdownVisible = ref(false);
 
-export default {
-  setup() {
-    const router = useRouter()
-    const userStore = useUserStore();
-    const dropdownVisible = ref(false);
+const navRef = ref<HTMLElement | null>(null);
 
-    const navRef = ref<HTMLElement | null>(null);
-
-    const closeMenu = () => {
-      if (navRef.value) {
-        navRef.value.classList.remove('show-mobile-menu');
-      }
-    };
-
-    const openMenu = () => {
-      if (navRef.value) {
-        navRef.value.classList.add('show-mobile-menu');
-      }
-    };
-
-    router.afterEach(() => {
-      closeMenu();
-    });
-
-    const userInitials = computed(() => {
-      if (!userStore.email) return ''
-      return userStore.email.slice(0, 2).toUpperCase()
-    })
-
-    function toggleDropdown() {
-      if (userStore.token) {
-        dropdownVisible.value = !dropdownVisible.value
-      } else {
-        router.push('/login')
-      }
-    }
-
-    function logout() {
-      userStore.clearUserData();
-      dropdownVisible.value = false;
-      router.push('/login');
-    }
-
-    return {
-      token: userStore.token,
-      userInitials,
-      dropdownVisible,
-      navRef,
-      closeMenu,
-      openMenu,
-      toggleDropdown,
-      logout,
-    }
-  },
+const closeMenu = () => {
+  if (navRef.value) {
+    navRef.value.classList.remove('show-mobile-menu');
+  }
 };
+
+const openMenu = () => {
+  if (navRef.value) {
+    navRef.value.classList.add('show-mobile-menu');
+  }
+};
+
+router.afterEach(() => {
+  closeMenu();
+});
+
+function toggleDropdown() {
+  if (userStore.token !== null) {
+    dropdownVisible.value = !dropdownVisible.value
+    return
+  } 
+  router.push("/login")
+}
+
+function logout() {
+  userStore.clearUserData();
+  dropdownVisible.value = false;
+  router.push('/login');
+}
+
 </script>
 
 <style scoped>

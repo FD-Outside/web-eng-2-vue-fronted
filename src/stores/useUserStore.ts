@@ -1,27 +1,36 @@
+import { setToken } from '@/utils/wretch';
 import { defineStore } from 'pinia';
-import { ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 export const useUserStore = defineStore('user', () => {
-  const token = ref(localStorage.getItem('token'));
-  const email = ref(localStorage.getItem('userEmail'));
+  const token = ref(localStorage.getItem('token'))
+  const email = ref(localStorage.getItem('userEmail'))
+
+  const userInitials = computed(() => email.value?.slice(0, 2) ?? null)
 
   const updateUserData = (newToken: string, newEmail: string) => {
-    token.value = newToken;
-    email.value = newEmail;
     localStorage.setItem('token', newToken);
     localStorage.setItem('userEmail', newEmail);
+    token.value = newToken
+    email.value = newEmail
   };
 
   const clearUserData = () => {
-    token.value = null;
-    email.value = null;
     localStorage.removeItem('token');
     localStorage.removeItem('userEmail');
+    token.value = null
+    email.value = null
   };
+
+  watch(token, (newToken, oldToken) => {
+    console.log("Set new token")
+    setToken(newToken);
+  }, {immediate: true})
 
   return {
     token,
     email,
+    userInitials,
     updateUserData,
     clearUserData,
   };

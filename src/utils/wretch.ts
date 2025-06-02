@@ -3,12 +3,16 @@ import wretch from "wretch";
 
 const baseUrl = "http://localhost:8081/api/v1"
 
-const apiInstance = wretch(baseUrl, {
+let apiInstance = wretch(baseUrl, {
     mode: "cors"
 })
 
-const setToken = (token: string) => {
-    apiInstance.auth(`Bearer ${token}`)
+const setToken = (token: string | null) => {
+    if (!token) {
+        apiInstance = apiInstance.auth('')
+        return
+    }
+    apiInstance = apiInstance.auth(`Bearer ${token}`)
 }
 
 async function fetchDailyPriceAndChange(symbol: string): Promise<{ price: number; dailyChange: number } | null> {
