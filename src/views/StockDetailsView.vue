@@ -60,12 +60,14 @@
     const store = useFavoritesStore();
 
     const isFav = computed(() => store.isFavorite(symbol));
-    const toggleFavorite = () => {
-        store.toggleFavorite({
+    const toggleFavorite = async () => {
+        //TODO: Check for logged in user when User Store is implemented
+        const success = await store.toggleFavorite({
             symbol,
             name: stockName.value,
             price: currentPrice.value,
         });
+        if(!success) return
         isFav.value = !isFav.value;
     };
 </script>

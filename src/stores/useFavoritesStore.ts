@@ -1,17 +1,79 @@
+import { apiInstance } from '@/utils/wretch';
+import { faL } from '@fortawesome/free-solid-svg-icons';
 import { defineStore } from 'pinia';
+import { ref } from 'vue';
 
 export interface Stock {
-  symbol: string;
-  name: string;
-  price: number;
-  dailyChange: number;
+  symbol: string
+  name: string
+  price: number
+  dailyChange: number
+}
+
+interface Favorite extends Stock {
+  id: number
+}
+
+interface BackendFavorite {
+  id: number
+  symbol: string
+  name: string
 }
 
 interface State {
-  favorites: Stock[];
+  favorites: Stock[]
 }
 
-export const useFavoritesStore = defineStore('favorites', {
+async function fetchDeleteFavorite(id: number): Promise<boolean> {
+  try {
+    const res = apiInstance.url(`/user/me/favorites/${id}`).delete()
+    const succesful = await res.json<boolean>()
+    return succesful
+  } catch (error) {
+    console.log(error)
+    return false
+  }
+}
+
+async function createNewFavorite(name: string, symbol: string): Promise<BackendFavorite | null> {
+  try {
+    const res = apiInstance.url(`/user/me/favorites`).post({
+      name,
+      symbol
+    })
+    const backendFavorite = await res.json<BackendFavorite>();
+    return backendFavorite
+  } catch (error) {
+    console.log(error)
+    return null
+  }
+}
+
+export const useFavoritesStore = defineStore('favorites', () => {
+  const favorites = ref<Favorite[]>([]);
+
+  async function toggleFavorite(stock: Stock): Promise<boolean> {
+    const exists = favorites.value.find((f) => f.symbol === stock.symbol)
+    if (exists) {
+      const success = await fetchDeleteFavorite(exists.id)
+      favorites.value = favorites.value.filter((s) => s.symbol !== stock.symbol);
+      return success;
+    }
+    const newBackendFavorite = await createNewFavorite(stock.name, stock.symbol)
+    if(!newBackendFavorite) return false
+    const newFavorite = {...newBackendFavorite, ...stock}
+    favorites.value.push(newFavorite)
+    return true
+  }
+
+  function isFavorite(symbol: string) {
+    return favorites.value.some((f) => f.symbol === symbol);
+  }
+
+  return { favorites, toggleFavorite, isFavorite }
+})
+
+export const oldUseFavoritesStore = defineStore('favorites', {
   state: (): State => ({
     favorites: [],
   }),

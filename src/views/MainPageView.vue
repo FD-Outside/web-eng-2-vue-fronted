@@ -31,7 +31,7 @@
 
 <script setup lang="ts">
 import type { BasicStock, StockResponse, SymbolResponse } from '@/types/apiResponses';
-import { apiInstance } from '@/utils/wretch';
+import { apiInstance, fetchDailyPriceAndChange } from '@/utils/wretch';
 
 import { ref, computed, watch } from 'vue';
 import type { WretchError } from 'wretch';
@@ -48,22 +48,6 @@ const stocks = ref([
     { symbol: 'TSLA', name: 'Tesla Inc.', price: 187.75, dailyChange: 3.52 },
     { symbol: 'NVDA', name: 'NVIDIA Corp.', price: 408.15, dailyChange: 1.9 }
 ]);
-
-async function fetchDailyPriceAndChange(symbol: string): Promise<{ price: number; dailyChange: number } | null> {
-    try {
-        const res = apiInstance.url(`/stock/daily?symbol=${symbol}`).get()
-        console.log(res)
-        const data: StockResponse = await res.json()
-        if (data.bars.length < 1) return null
-        const latestBar = data.bars[data.bars.length - 1]
-        const oldBar = data.bars[0]
-        const dailyChange = ((latestBar.c - oldBar.c) / oldBar.c) * 100
-        const price = latestBar.c
-        return {price, dailyChange}
-    } catch (error) {
-        return null;
-    }
-}
 
 const searchResult = ref<BasicStock[]>([])
 
