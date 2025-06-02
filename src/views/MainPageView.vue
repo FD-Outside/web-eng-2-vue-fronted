@@ -5,7 +5,7 @@
         <input v-model="searchQuery" type="text" placeholder="🔍   Suchen Sie nach bestimmten Aktien"
             class="search-bar" />
 
-        <grid class="stock-grid">
+        <div class="stock-grid">
             <router-link v-for="stock in filteredStocks" :key="stock.symbol" :to="'/' + stock.symbol"
                 class="stock-card">
                 <h3>{{ stock.symbol }} – {{ stock.name }}</h3>
@@ -14,37 +14,87 @@
                     <p class="daily-change">
                         <font-awesome-icon
                             :icon="['fas', stock.dailyChange > 0 ? 'arrow-up' : stock.dailyChange < 0 ? 'arrow-down' : '']"
-                            :style="{ color: stock.dailyChange > 0 ? 'green' : stock.dailyChange < 0 ? 'red' : '#666' }"
-                        />
+                            :style="{ color: stock.dailyChange > 0 ? 'green' : stock.dailyChange < 0 ? 'red' : '#666' }" />
                         {{ stock.dailyChange }}%
                     </p>
                 </div>
             </router-link>
-        </grid>
-        
+            <div v-if="searching" class="stock-card" aria-busy="true">
+                <div class="loader-wrapper">
+                    <span class="loader"></span>
+                </div>
+            </div>
+        </div>
+
     </main>
 </template>
 
-<script setup>
-import { ref, computed } from 'vue';
+<script setup lang="ts">
+import type { BasicStock, StockResponse, SymbolResponse } from '@/types/apiResponses';
+import { apiInstance } from '@/utils/wretch';
+
+import { ref, computed, watch } from 'vue';
+import type { WretchError } from 'wretch';
 
 const searchQuery = ref('');
+const searching = ref(false);
 
 // Sample stock data
-const stocks = [
+const stocks = ref([
     { symbol: 'AAPL', name: 'Apple Inc.', price: 178.20, dailyChange: 1.45 },
     { symbol: 'MSFT', name: 'Microsoft Corp.', price: 312.55, dailyChange: -2.8 },
     { symbol: 'GOOGL', name: 'Alphabet Inc.', price: 125.90, dailyChange: 0 },
     { symbol: 'AMZN', name: 'Amazon.com Inc.', price: 132.45, dailyChange: -1.45 },
     { symbol: 'TSLA', name: 'Tesla Inc.', price: 187.75, dailyChange: 3.52 },
     { symbol: 'NVDA', name: 'NVIDIA Corp.', price: 408.15, dailyChange: 1.9 }
-];
+]);
+
+const searchResult = ref<BasicStock[]>([])
+
+async function fetchSearchData(newQuery: string) {
+    try {
+        searching.value = true
+        stocks.value = []
+        const res = apiInstance.url(`/stock/symbol?name=${newQuery}`).get()
+        const data: SymbolResponse = await res.json()
+        console.log("Data Recieved", data)
+        for (const stock of data.assets) {
+            searchResult.value.push(stock)
+            const res = apiInstance.url(`/stock/daily?symbol=${stock.symbol}`).get()
+            console.log(res)
+            const data: StockResponse = await res.json()
+            if (data.bars.length < 1) continue
+            const latestBar = data.bars[data.bars.length - 1]
+            const oldBar = data.bars[0]
+            console.log(latestBar.t, latestBar.c)
+            console.log(oldBar.t, oldBar.c)
+            const dailyChange = ((latestBar.c - oldBar.c) / oldBar.c) * 100
+            const price = latestBar.c
+            stocks.value.push({ ...stock, dailyChange: Number(dailyChange.toPrecision(5)), price: price })
+        }
+    } catch (error) {
+        console.log(error)
+        const wretchError = error as WretchError
+        console.log(wretchError.message)
+    }
+    searching.value = false
+}
+
+let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+watch(searchQuery, async (newQuery, oldQuery) => {
+    if (newQuery.length < 3) return;
+    if (debounceTimer) clearTimeout(debounceTimer)
+
+    debounceTimer = setTimeout(() => {
+        fetchSearchData(newQuery);
+    }, 400)
+})
 
 
 const filteredStocks = computed(() => {
     const query = searchQuery.value.trim().toLowerCase();
-    if (searchQuery.value === '') return stocks;
-    return stocks.filter(stock =>
+    if (searchQuery.value === '') return stocks.value;
+    return stocks.value.filter(stock =>
         stock.name.toLowerCase().includes(query) ||
         stock.symbol.toLowerCase().includes(query)
     );
@@ -113,9 +163,38 @@ const filteredStocks = computed(() => {
 }
 
 .daily-change {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 500;
+}
+
+.loader-wrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.loader {
+    width: 48px;
+    height: 48px;
+    border: 5px solid #6b7280;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 </style>
