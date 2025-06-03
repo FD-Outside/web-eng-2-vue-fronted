@@ -94,6 +94,10 @@ async function fetchSearchData(newQuery: string) {
 
 let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 watch(searchQuery, async (newQuery, oldQuery) => {
+    if (newQuery.length <= 0) {
+        loadDefaultStock()
+        return
+    }
     if (newQuery.length < 3) return;
     if (debounceTimer) clearTimeout(debounceTimer)
 
