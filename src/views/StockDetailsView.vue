@@ -45,9 +45,9 @@ const lastUpdated = ref('–');
 
 const chartBars = ref<Bar[]>([])
 
-async function fetchDailyBars(symbol: string) {
+async function fetchBars(timeframe: "daily" | "weekly" | "monthly" | "yearly", symbol: string) {
     try {
-        const res = apiInstance.url(`/stock/daily?symbol=${symbol}`).get()
+        const res = apiInstance.url(`/stock/${timeframe}?symbol=${symbol}`).get()
         const data = await res.json<StockResponse>();
         if(data.bars.length < 1) return
         console.log(data)
@@ -62,7 +62,7 @@ async function fetchDailyBars(symbol: string) {
     }
 }
 
-fetchDailyBars(symbol)
+fetchBars("daily", symbol)
 
 const store = useFavoritesStore();
 
