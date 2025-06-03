@@ -112,16 +112,24 @@ onMounted(() => {
 })
 
 function prepareRender() {
+
   if (!bars) return
   if (!mounted.value) return
 
   lineChartInstance.value?.destroy();
-  lineChartInstance.value = null;
 
   candleChartInstance.value?.destroy();
-  candleChartInstance.value = null;
 
-  nextTick(() => renderChart(chartType.value))
+  nextTick(() => {
+    try {
+      renderChart(chartType.value)
+    } catch (error) {
+      console.log(lineChartInstance.value, candleChartInstance.value)
+      lineChartInstance.value?.destroy();
+      candleChartInstance.value?.destroy();
+    }
+  })
+
 }
 
 watch(chartType, () => {
