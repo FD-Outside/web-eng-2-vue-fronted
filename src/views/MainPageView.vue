@@ -48,7 +48,14 @@ const defaultStocks = [
     { symbol: 'GOOGL', name: 'Alphabet Inc.'},
     { symbol: 'AMZN', name: 'Amazon.com Inc.'},
     { symbol: 'TSLA', name: 'Tesla Inc.'},
-    { symbol: 'NVDA', name: 'NVIDIA Corp.'}
+    { symbol: 'NVDA', name: 'NVIDIA Corp.'},
+    { symbol: 'META', name: 'Meta Platforms, Inc.'},
+    { symbol: 'NFLX', name: 'Netflix, Inc.'},
+    { symbol: 'COST', name: 'Costco Wholesale Corporation'},
+    { symbol: 'PLTR', name : 'Palantir Technologies Inc.'},
+    { symbol: 'TMUS', name : 'T-Mobile US, Inc'},
+    { symbol: 'ADBE', name : 'Adobe Inc. Common Stock'},
+    { symbol: 'COKE', name : 'Coca-Cola Consolidated, Inc.'},
 ]
 
 loadDefaultStock()
