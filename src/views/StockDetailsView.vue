@@ -10,6 +10,8 @@
             <div class="stock-info">
                 <p><strong>Aktueller Kurs:</strong> {{ currentPrice }}€</p>
                 <p><strong>Veränderung:</strong> {{ priceChange }}%</p>
+                <p><strong>Höchster Preis:</strong> {{ highestPrice }}€</p>
+                <p><strong>Niedrigster Preis:</strong> {{ lowestPrice }}€</p>
                 <p><strong>Letztes Update:</strong> {{ lastUpdated }}</p>
             </div>
         </section>
@@ -41,6 +43,8 @@ const userStore = useUserStore()
 
 const currentPrice = ref(0);
 const priceChange = ref(0);
+const highestPrice = ref(0);
+const lowestPrice = ref(0);
 const lastUpdated = ref('–');
 
 const chartBars = ref<Bar[]>([])
@@ -54,6 +58,8 @@ async function fetchBars(timeframe: "daily" | "weekly" | "monthly" | "yearly", s
         const latestBar = data.bars[data.bars.length - 1]
         const oldBar = data.bars[0]
         currentPrice.value = latestBar.c
+        highestPrice.value = Math.max(...data.bars.map(bar => bar.h));
+        lowestPrice.value = Math.min(...data.bars.map(bar => bar.l));
         priceChange.value = Number((((latestBar.c - oldBar.c) / oldBar.c) * 100).toPrecision(4))
         lastUpdated.value = latestBar.t //can be updated to actual formatted time
         chartBars.value = data.bars
