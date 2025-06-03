@@ -39,9 +39,11 @@
 import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/useUserStore';
+import { useFavoritesStore } from '@/stores/useFavoritesStore';
 
 const router = useRouter()
 const userStore = useUserStore();
+const favoriteStore = useFavoritesStore()
 const dropdownVisible = ref(false);
 
 const navRef = ref<HTMLElement | null>(null);
@@ -71,6 +73,7 @@ function toggleDropdown() {
 }
 
 function logout() {
+  favoriteStore.clearFavorites()
   userStore.clearUserData();
   dropdownVisible.value = false;
   router.push('/login');

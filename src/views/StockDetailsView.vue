@@ -8,7 +8,7 @@
         </div>
         <section class="stock-overview">
             <div class="stock-info">
-                <p><strong>Aktueller Kurs:</strong> {{ currentPrice }} €</p>
+                <p><strong>Aktueller Kurs:</strong> {{ currentPrice }}€</p>
                 <p><strong>Veränderung:</strong> {{ priceChange }}%</p>
                 <p><strong>Letztes Update:</strong> {{ lastUpdated }}</p>
             </div>

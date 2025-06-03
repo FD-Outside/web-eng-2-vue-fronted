@@ -1,17 +1,11 @@
-import type { Stock } from '@/types/apiResponses';
-import { apiInstance } from '@/utils/wretch';
+import type { BackendFavorite, Stock, UserMeResponse } from '@/types/apiResponses';
+import { apiInstance, fetchDailyPriceAndChange } from '@/utils/wretch';
 import { faL } from '@fortawesome/free-solid-svg-icons';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
 interface Favorite extends Stock {
   id: number
-}
-
-interface BackendFavorite {
-  id: number
-  symbol: string
-  name: string
 }
 
 interface State {
@@ -54,8 +48,8 @@ export const useFavoritesStore = defineStore('favorites', () => {
       return success;
     }
     const newBackendFavorite = await createNewFavorite(stock.name, stock.symbol)
-    if(!newBackendFavorite) return false
-    const newFavorite = {...newBackendFavorite, ...stock}
+    if (!newBackendFavorite) return false
+    const newFavorite = { ...newBackendFavorite, ...stock }
     favorites.value.push(newFavorite)
     return true
   }
@@ -64,7 +58,30 @@ export const useFavoritesStore = defineStore('favorites', () => {
     return favorites.value.some((f) => f.symbol === symbol);
   }
 
-  return { favorites, toggleFavorite, isFavorite }
+  function clearFavorites() {
+    favorites.value = []
+  }
+
+  async function fetchFavoriteList() {
+    try {
+      const res = apiInstance.url("/users/me").get()
+      const data = await res.json<UserMeResponse>()
+      if (data.favorites.length < 1) return
+      for (const backendFav of data.favorites) {
+        const exists = favorites.value.find(fav => fav.id === backendFav.id)
+        if (exists) continue
+        const details = await fetchDailyPriceAndChange(backendFav.symbol)
+        if (!details) continue
+        favorites.value.push({...backendFav, ...details})
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  fetchFavoriteList()
+
+  return { favorites, toggleFavorite, isFavorite, clearFavorites, fetchFavoriteList}
 })
 
 export const oldUseFavoritesStore = defineStore('favorites', {
