@@ -19,14 +19,9 @@
           <div class="price-container">
             <p>Kurs: {{ stock.price }} €</p>
             <p class="daily-change">
-              <i :class="[
-                  'fa-solid',
-                  stock.dailyChange > 0 ? 'fa-arrow-up' : stock.dailyChange < 0 ? 'fa-arrow-down' : ''
-                ]" 
-                :style="{
-                  color: stock.dailyChange > 0 ? 'green' : stock.dailyChange < 0 ? 'red' : '#666'
-                }"
-              ></i>
+              <font-awesome-icon
+                  :icon="['fas', stock.dailyChange > 0 ? 'arrow-up' : stock.dailyChange < 0 ? 'arrow-down' : '']"
+                  :style="{ color: stock.dailyChange > 0 ? 'green' : stock.dailyChange < 0 ? 'red' : '#666' }" />
               {{ stock.dailyChange }}%
             </p>
           </div>
