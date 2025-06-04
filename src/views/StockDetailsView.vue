@@ -61,7 +61,15 @@ async function fetchBars(timeframe: "daily" | "weekly" | "monthly" | "yearly", s
         highestPrice.value = Math.max(...data.bars.map(bar => bar.h));
         lowestPrice.value = Math.min(...data.bars.map(bar => bar.l));
         priceChange.value = Number((((latestBar.c - oldBar.c) / oldBar.c) * 100).toPrecision(4))
-        lastUpdated.value = latestBar.t //can be updated to actual formatted time
+        const date = new Date(latestBar.t);
+        lastUpdated.value = date.toLocaleString('de-DE', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+        });
         chartBars.value = data.bars
     } catch (error) {
         console.log(error)
