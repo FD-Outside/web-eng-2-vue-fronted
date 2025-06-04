@@ -16,9 +16,19 @@
             </div>
         </section>
 
+        <div class="timeframe-selector">
+            <label for="timeframe" class="mr-2 font-medium">Zeitraum: </label>
+            <select id="timeframe" v-model="selectedTimeframe" @change="updateTimeframe" class="border rounded p-1">
+                <option value="daily">Täglich</option>
+                <option value="weekly">Wöchentlich</option>
+                <option value="monthly">Monatlich</option>
+                <option value="yearly">Jährlich</option>
+            </select>
+        </div>
+
         <section class="stock-chart">
             <h3>Kursverlauf</h3>
-            <StockChartComponent :bars="chartBars"></StockChartComponent>
+            <StockChartComponent :bars="chartBars" :timeframe="selectedTimeframe"></StockChartComponent>
         </section>
     </main>
 </template>
@@ -49,6 +59,8 @@ const lastUpdated = ref('–');
 
 const chartBars = ref<Bar[]>([])
 
+const selectedTimeframe = ref<'daily' | 'weekly' | 'monthly' | 'yearly'>('daily'); // Standart: 'daily'
+
 async function fetchBars(timeframe: "daily" | "weekly" | "monthly" | "yearly", symbol: string) {
     try {
         const res = apiInstance.url(`/stock/${timeframe}?symbol=${symbol}`).get()
@@ -76,7 +88,11 @@ async function fetchBars(timeframe: "daily" | "weekly" | "monthly" | "yearly", s
     }
 }
 
-fetchBars("daily", symbol)
+fetchBars(selectedTimeframe.value, symbol);
+
+function updateTimeframe() {
+  fetchBars(selectedTimeframe.value, symbol);
+}
 
 const store = useFavoritesStore();
 
@@ -162,5 +178,9 @@ const toggleFavorite = async () => {
 
 .favorite-button .fa-regular {
     color: #ccc;
+}
+
+.timeframe-selector {
+  margin-bottom: 1rem;
 }
 </style>
