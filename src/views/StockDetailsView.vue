@@ -59,7 +59,7 @@ const lastUpdated = ref('–');
 
 const chartBars = ref<Bar[]>([])
 
-const selectedTimeframe = ref<'daily' | 'weekly' | 'monthly' | 'yearly'>('daily'); // Standart: 'daily'
+const selectedTimeframe = ref<'daily' | 'weekly' | 'monthly' | 'yearly'>('daily'); // Standard: 'daily'
 
 async function fetchBars(timeframe: "daily" | "weekly" | "monthly" | "yearly", symbol: string) {
     try {
