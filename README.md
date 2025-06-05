@@ -1,5 +1,9 @@
 # web-eng-2-vue-frontend
 
+## Zusammenarbeit und Entwicklung
+
+> **Hinweis:** Das gesamte Projekt wurde im Rahmen von **Pair Programming** realisiert. Wir, als Team, haben sowohl das **Frontend** als auch das **Backend** gemeinsam entwickelt, indem wir jeden einzelnen Schritt sorgfältig miteinander abgestimmt haben. Da wir zusammen in einer Wohngemeinschaft wohnen, konnten wir uns jederzeit unkompliziert austauschen, Ideen besprechen und Herausforderungen direkt gemeinsam lösen. 
+
 This template should help get you started developing with Vue 3 in Vite.
 
 ## Recommended IDE Setup
