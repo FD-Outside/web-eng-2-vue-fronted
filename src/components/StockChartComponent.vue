@@ -84,13 +84,7 @@ const renderChart = (chartType: "line" | "candlestick") => {
         responsive: true,
         scales: {
           x: {
-            type: 'time',
-            time: {
-              unit: 'minute'
-            },
-            ticks: {
-              source: 'auto'
-            }
+            display: true,
           },
           y: {
             display: true
