@@ -21,26 +21,31 @@ const lineChartInstance = ref<Chart | null>(null);
 const candleChartInstance = ref<Chart | null>(null);
 const chartType = ref<'line' | 'candlestick'>('line');
 
-const { bars } = defineProps<{
-  bars: Bar[]
+const { bars, timeframe } = defineProps<{
+  bars: Bar[],
+  timeframe: 'daily' | 'weekly' | 'monthly' | 'yearly'
 }>()
 
 const stockBars = computed(() => bars)
-const timeframe = ref<'daily' | 'weekly' | 'monthly' | 'yearly'>('daily');
 
 const renderChart = (chartType: "line" | "candlestick") => {
   if (!canvasRef.value) return;
 
   const labels = stockBars.value.map(bar => {
     const date = new Date(bar.t);
-    if (timeframe.value === 'daily') {
-      return date.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
-    } else if (timeframe.value === 'weekly' || timeframe.value === 'monthly') {
-      return date.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' });
-    } else if (timeframe.value === 'yearly') {
-      return date.toLocaleDateString('de-DE', { year: 'numeric', month: '2-digit' });
+    switch (timeframe) {
+      case 'daily':
+        return date.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })
+      case 'weekly': 
+      case 'monthly':
+        return date.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' })
+      case 'yearly':
+        return date.toLocaleDateString('de-DE', { year: 'numeric', month: '2-digit', day: '2-digit'})
+      default:
+        return date.toLocaleDateString('de-DE', { year: 'numeric', month: '2-digit', day: '2-digit'})
     }
   });
+  console.log(labels)
 
   if (chartType === 'line') {
     const prices = stockBars.value.map(bar => bar.c);
