@@ -21,22 +21,9 @@ const lineChartInstance = ref<Chart | null>(null);
 const candleChartInstance = ref<Chart | null>(null);
 const chartType = ref<'line' | 'candlestick'>('line');
 
-const defaultBars = ref([
-  { t: '2024-05-24T10:00:00Z', o: 150.00, h: 150.60, l: 149.80, c: 150.10 },
-  { t: '2024-05-24T10:05:00Z', o: 150.10, h: 150.40, l: 149.90, c: 150.30 },
-  { t: '2024-05-24T10:10:00Z', o: 150.30, h: 150.35, l: 149.85, c: 149.90 },
-  { t: '2024-05-24T10:15:00Z', o: 149.90, h: 150.90, l: 149.70, c: 150.60 },
-  { t: '2024-05-24T10:20:00Z', o: 150.60, h: 151.30, l: 150.50, c: 151.10 },
-  { t: '2024-05-24T10:25:00Z', o: 151.10, h: 151.50, l: 150.80, c: 151.20 },
-  { t: '2024-05-24T10:30:00Z', o: 151.20, h: 151.70, l: 150.90, c: 151.60 },
-  { t: '2024-05-24T10:35:00Z', o: 151.60, h: 152.00, l: 151.20, c: 151.80 },
-  { t: '2024-05-24T10:40:00Z', o: 151.80, h: 152.20, l: 151.50, c: 152.00 },
-  { t: '2024-05-24T10:45:00Z', o: 152.00, h: 152.50, l: 151.70, c: 152.30 },
-  { t: '2024-05-24T10:50:00Z', o: 152.30, h: 152.80, l: 151.90, c: 152.60 }
-]);
-
-const { bars } = defineProps<{
-  bars: Bar[]
+const { bars, timeframe } = defineProps<{
+  bars: Bar[],
+  timeframe: 'daily' | 'weekly' | 'monthly' | 'yearly'
 }>()
 
 const stockBars = computed(() => bars)
@@ -44,8 +31,23 @@ const stockBars = computed(() => bars)
 const renderChart = (chartType: "line" | "candlestick") => {
   if (!canvasRef.value) return;
 
+  const labels = stockBars.value.map(bar => {
+    const date = new Date(bar.t);
+    switch (timeframe) {
+      case 'daily':
+        return date.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })
+      case 'weekly': 
+      case 'monthly':
+        return date.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' })
+      case 'yearly':
+        return date.toLocaleDateString('de-DE', { year: 'numeric', month: '2-digit', day: '2-digit'})
+      default:
+        return date.toLocaleDateString('de-DE', { year: 'numeric', month: '2-digit', day: '2-digit'})
+    }
+  });
+  console.log(labels)
+
   if (chartType === 'line') {
-    const labels = stockBars.value.map(bar => new Date(bar.t).toLocaleTimeString());
     const prices = stockBars.value.map(bar => bar.c);
     lineChartInstance.value = new Chart(canvasRef.value, {
       type: 'line',
@@ -87,13 +89,7 @@ const renderChart = (chartType: "line" | "candlestick") => {
         responsive: true,
         scales: {
           x: {
-            type: 'time',
-            time: {
-              unit: 'minute'
-            },
-            ticks: {
-              source: 'auto'
-            }
+            display: true,
           },
           y: {
             display: true
